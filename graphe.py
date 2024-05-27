@@ -1,7 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import re
-import matplotlib.pyplot as plt
 
 
 
@@ -49,13 +48,6 @@ with open(chemin_fichier, 'r') as f:
                         stringLiAjoute = stringLi2
                     Hollywood.add_edge(stringAcAjoute, stringLiAjoute)
                     #print(stringAc, stringLi)
-
-for node in Hollywood.nodes():
-    print(Hollywood[node])
-
-plt.cla()
-nx.draw(Hollywood)
-plt.show()
 
 fic.close()
 #res = Hollywood.adj['[[Richard Kiley]]']
