@@ -2,55 +2,28 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import re
 
+def json_vers_nx(nom_fichier):
+    Hollywood = nx.Graph()
+
+    with open(nom_fichier, 'r') as f:
+        for line in f:
+            tests = eval(line)
+
+            for actor in tests["cast"]:
+                stringAc = re.sub(r"[\[\]]", "", actor).split("|")[-1]
+                Hollywood.add_node(stringAc)
 
 
-chemin_fichier = "jeux de données réduits-20240507/data_10000.txt"
-fic = open("dataTest.txt", "a")
-Hollywood = nx.Graph()
+            for actor in tests["cast"]:
+                for other_actor in tests["cast"]:
+                    if actor != other_actor:
+                        stringAc = re.sub(r"[\[\]]", "", actor).split("|")[-1]
+                        stringLi = re.sub(r"[\[\]]", "", other_actor).split("|")[-1]
+                        Hollywood.add_edge(stringAc, stringLi)
 
-cpt = sum(1 for _ in chemin_fichier)
+    return Hollywood
 
-with open(chemin_fichier, 'r') as f:
-    for i in range(cpt):
-        test = f.readline()
-        tests = eval(test)
-
-
-        for acteurs in tests["cast"]:
-            string = re.sub("[[]", "", acteurs)
-            s1 = re.sub("[]]", "", string)
-            if "|" in s1:
-                stock = s1.split("|")
-                stringAc = stock[1]
-            else:
-                stringAc = s1
-            Hollywood.add_node(stringAc)
-
-
-        for acteur in tests["cast"]:
-            for lien in tests["cast"]:
-                if acteur != lien:
-                    stringAc = re.sub("[[]", "", acteur)
-                    stringAc2 = re.sub("[]]", "", stringAc)
-                    stringLi = re.sub("[[]", "", lien)
-                    stringLi2 = re.sub("[]]", "", stringLi)
-
-                    if "|" in stringAc2:
-                        stock = stringAc2.split("|")
-                        stringAcAjoute = stock[1]
-                    else:
-                        stringAcAjoute = stringAc2
-
-                    if "|" in stringLi2:
-                        stock = stringLi2.split("|")
-                        stringLiAjoute = stock[1]
-                    else:
-                        stringLiAjoute = stringLi2
-                    Hollywood.add_edge(stringAcAjoute, stringLiAjoute)
-                    #print(stringAc, stringLi)
-
-fic.close()
-
+Hollywood = json_vers_nx("jeux de données réduits-20240507/data.txt")
 
 def collaborateurs_communs(G,u,v):
     """Fonction renvoyant l'ensemble des acteurs en commun entre u et v. La fonction renvoie None si u ou v est absent du graphe.
