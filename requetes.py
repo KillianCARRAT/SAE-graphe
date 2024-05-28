@@ -52,7 +52,7 @@ with open(chemin_fichier, 'r') as f:
 fic.close()
 
 
-def collaborateur_commun(G,u,v):
+def collaborateurs_communs(G,u,v):
     """Fonction renvoyant l'ensemble des acteurs en commun entre u et v. La fonction renvoie None si u ou v est absent du graphe.
     
     Parametres:
@@ -117,7 +117,7 @@ def distance(G,u,v):
     return None
 
 
-print(collaborateur_commun(Hollywood,"James Mapes","Burt Richards"))
+print(collaborateurs_communs(Hollywood,"James Mapes","Burt Richards"))
 
 
 print(collaborateurs_proches(Hollywood,"James Mapes",1))
