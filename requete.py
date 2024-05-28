@@ -122,6 +122,18 @@ print(collaborateurs_proches(Hollywood,"James Mapes",1))
 
 print(distance_entre_deux(Hollywood,"James Mapes","Holly Hunter"))
 
+def centralite(G, u):
+    res = 0
+    for node in G.nodes:
+        di = distance_entre_deux(G, u, node)
+        if di is not None and  di > res:
+            res = di
+    return res
+
+
+
+
+print(centralite(Hollywood, "James Mapes"))
 
 
 print(len(Hollywood.nodes()))
