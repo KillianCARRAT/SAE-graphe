@@ -1,29 +1,42 @@
 import networkx as nx
+import json
 import matplotlib.pyplot as plt
 import re
+import time
 
 def json_vers_nx(nom_fichier):
+    """_summary_
+
+    Args:
+        nom_fichier (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     Hollywood = nx.Graph()
 
-    with open(nom_fichier, 'r') as f:
+    with open(nom_fichier, 'r', encoding="utf-8") as f:
         for line in f:
-            tests = eval(line)
+            tests = json.loads(line)  # Use json.loads instead of eval
 
-            for actor in tests["cast"]:
-                stringAc = re.sub(r"[\[\]]", "", actor).split("|")[-1]
-                Hollywood.add_node(stringAc)
+            # Create a set of actors
+            actors = {re.sub(r"[\[\]]", "", actor).split("|")[-1] for actor in tests["cast"]}
+            
+            # Add nodes (actors) to the graph
+            Hollywood.add_nodes_from(actors)
 
-
-            for actor in tests["cast"]:
-                for other_actor in tests["cast"]:
+            # Add edges between every pair of actors in the cast
+            for actor in actors:
+                for other_actor in actors:
                     if actor != other_actor:
-                        stringAc = re.sub(r"[\[\]]", "", actor).split("|")[-1]
-                        stringLi = re.sub(r"[\[\]]", "", other_actor).split("|")[-1]
-                        Hollywood.add_edge(stringAc, stringLi)
+                        Hollywood.add_edge(actor, other_actor)
 
     return Hollywood
 
+start = time.time()
 Hollywood = json_vers_nx("jeux de données réduits-20240507/data.txt")
+end = time.time()
+print(end - start)
 
 def collaborateurs_communs(G,u,v):
     """Fonction renvoyant l'ensemble des acteurs en commun entre u et v. La fonction renvoie None si u ou v est absent du graphe.
@@ -31,7 +44,7 @@ def collaborateurs_communs(G,u,v):
     Parametres:
         G: le graphe
         u: le sommet de départ
-        v: le sommet de départ
+        v: le sommet d'arriver
 
     """
     if u not in G.nodes or v not in G.nodes:
@@ -68,10 +81,29 @@ def collaborateurs_proches(G,u,k):
     return collaborateurs
 
 def est_proche(G,u,v,k=1):
+    """Fonction renvoyant True si u et v sont voisine. La fonction renvoie None si u ou v est absent du graphe.
+    
+
+    Args:
+        G: le graphe
+        u: le sommet de départ
+        v: le sommet d'arriver
+        k:la distance depuis u Defaults to 1
+    """
     return v in collaborateurs_proches(G,u,k)
 
 
 def distance(G,u,v):
+    """_summary_
+
+    Args:
+        G: le graphe
+        u: le sommet de départ
+        v: le sommet d'arriver
+
+    Returns:
+        _type_: _description_
+    """
     if u not in G.nodes or v not in G.nodes:
         print(u, 'ou',v,"sont des illustres inconnus")
         return None
@@ -97,21 +129,69 @@ print(collaborateurs_proches(Hollywood,"James Mapes",1))
 
 print(distance(Hollywood,"James Mapes","Holly Hunter"))
 
+
 def centralite(G,u):
+    """_summary_
+
+    Args:
+        G: le graphe
+        u: le sommet de départ
+
+    Returns:
+        _type_: _description_
+    """
     if u not in G.nodes:
         print(u,"est un illustre inconnu")
         return None
+    deja_vue = set()
+    deja_vue.add(u)
     collaborateurs = set()
     collaborateurs.add(u)
     for i in range(len(G.nodes)):
         collaborateurs_directs = set()
         for c in collaborateurs:
             for voisin in G.adj[c]:
-                if voisin not in collaborateurs:
+                if voisin not in deja_vue:
                     collaborateurs_directs.add(voisin)
         if len(collaborateurs_directs)==0:
-            return i    
-        collaborateurs = collaborateurs.union(collaborateurs_directs)
+            return i
+        collaborateurs = collaborateurs_directs
+        deja_vue = deja_vue.union(collaborateurs_directs)
     return None
 
 
+
+def centre_hollywood(G):
+    """_summary_
+
+    Args:
+        G: le graph
+
+    Returns:
+        _type_: _description_
+    """
+    name = ""
+    minimum = None
+    for node in G.nodes():
+        if len(G.adj[node]) > 1:
+            stock = centralite(G, node)
+            if minimum is None or stock < minimum:
+                name = node
+                minimum = stock
+    return name
+
+
+
+
+
+start = time.time()
+print(centralite(Hollywood,"Leonardo DiCaprio"))
+end = time.time()
+print(end-start)
+
+
+
+start = time.time()
+#print(centralite_hollywood(Hollywood))
+end = time.time()
+print(end-start)
