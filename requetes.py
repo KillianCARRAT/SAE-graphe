@@ -38,7 +38,6 @@ Hollywood = json_vers_nx("jeux de données réduits-20240507/data.txt")
 end = time.time()
 print(end - start)
 
-
 def collaborateurs_communs(G,u,v):
     """Fonction renvoyant l'ensemble des acteurs en commun entre u et v. La fonction renvoie None si u ou v est absent du graphe.
     
