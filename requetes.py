@@ -181,7 +181,23 @@ def centre_hollywood(G):
     return name
 
 
+def eloignement_max(G):
+    """_summary_
 
+    Args:
+        G: le graph
+
+    Returns:
+        _type_: _description_
+    """
+    name = ""
+    maximum = None
+    for node in G.nodes():
+        stock = centralite(G, node)
+        if maximum is None or stock >maximum:
+            name = node
+            maximum = stock
+    return name
 
 
 start = time.time()
@@ -192,6 +208,8 @@ print(end-start)
 
 
 start = time.time()
-#print(centralite_hollywood(Hollywood))
+#print(eloignement_max(Hollywood))
 end = time.time()
 print(end-start)
+
+
