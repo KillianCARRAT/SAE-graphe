@@ -154,7 +154,7 @@ def centralite(G,u):
                 if voisin not in deja_vue:
                     collaborateurs_directs.add(voisin)
         if len(collaborateurs_directs)==0:
-            return i
+            return i, c
         collaborateurs = collaborateurs_directs
         deja_vue = deja_vue.union(collaborateurs_directs)
     return None
@@ -174,7 +174,7 @@ def centre_hollywood(G):
     minimum = None
     for node in G.nodes():
         if len(G.adj[node]) > 1:
-            stock = centralite(G, node)
+            stock = centralite(G, node)[0]
             if minimum is None or stock < minimum:
                 name = node
                 minimum = stock
@@ -190,14 +190,13 @@ def eloignement_max(G):
     Returns:
         _type_: _description_
     """
-    name = ""
-    maximum = None
-    for node in G.nodes():
-        stock = centralite(G, node)
-        if maximum is None or stock >maximum:
-            name = node
-            maximum = stock
-    return name
+    for i in G.nodes:
+        name = i
+        break
+    print(name)
+    maximum, nom = centralite(G, name)
+    res = centralite(G, nom)
+    return res
 
 
 start = time.time()
