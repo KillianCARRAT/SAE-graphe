@@ -132,6 +132,7 @@ def centralite(G,u):
 
     Returns:
         int : donne ça distance avec l'acteur le plus loin de lui.
+        c : un collaborateur du dernier cercle
     """
     if u not in G.nodes:
         print(u,"est un illustre inconnu")
@@ -185,9 +186,15 @@ def eloignement_max(G):
     Returns:
         int : distance maximale entre deux acteurs.
     """
+    res = []
+    compteur = 0
     for i in G.nodes:
         name = i
-        break
-    maximum, nom = centralite(G, name)
-    res = centralite(G, nom)
-    return res
+        maximum, nom = centralite(G, name)
+        distance, tmp = centralite(G, nom)
+        res.append(distance)
+        if compteur > 4:
+            break
+        compteur +=1
+    
+    return max(res)
