@@ -179,8 +179,9 @@ def eloignement_max(G):
     """Cherche la distance maximale entre deux acteurs dans le graphe.
 
     Args:
-        G : le graphe
+        G: le graph
 
+    
     Returns:
         int : distance maximale entre deux acteurs.
     """
