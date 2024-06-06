@@ -188,8 +188,7 @@ def eloignement_max(G):
     """
     res = []
     compteur = 0
-    for i in G.nodes:
-        name = i
+    for name in G.nodes:
         maximum, nom = centralite(G, name)
         distance, tmp = centralite(G, nom)
         res.append(distance)
