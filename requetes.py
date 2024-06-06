@@ -1,3 +1,4 @@
+import time
 import networkx as nx
 import json
 import matplotlib.pyplot as plt
@@ -121,25 +122,7 @@ def distance(G,u,v):
     print('ils ne se connaissent pas')
     return None
 
-def distance_naive(G,u,v):
-    """Donne la distance entre les deux acteurs dans le graphe. 
 
-    Args:
-        G : le graphe
-        u : le sommet de départ
-        v : le sommet d'arriver
-
-    Returns:
-        int : la distance entre les deux acteurs.
-    """
-    if u not in G.nodes or v not in G.nodes:
-        print(u, 'ou',v,"sont des illustres inconnus")
-        return None
-    for i in range(len(G.nodes)):
-      if v in collaborateurs_proches(G,u,i):
-          return i
-    print('ils ne se connaissent pas')
-    return None
 
 def centralite(G,u):
     """Donne la centralité d'un acteur dans le graphe. 
@@ -150,7 +133,56 @@ def centralite(G,u):
 
     Returns:
         int : donne ça distance avec l'acteur le plus loin de lui.
-        c : un collaborateur du dernier cercle
+    """
+    if u not in G.nodes:
+        print(u,"est un illustre inconnu")
+        return None
+    deja_vue = set()
+    deja_vue.add(u)
+    collaborateurs = set()
+    collaborateurs.add(u)
+    for i in range(len(G.nodes)):
+        collaborateurs_directs = set()
+        for c in collaborateurs:
+            for voisin in G.adj[c]:
+                if voisin not in deja_vue:
+                    collaborateurs_directs.add(voisin)
+        if len(collaborateurs_directs)==0:
+            return i
+        collaborateurs = collaborateurs_directs
+        deja_vue = deja_vue.union(collaborateurs_directs)
+    return None
+
+
+
+def centre_hollywood(G):
+    """Cherche le nom de l'acteur le plus central dans le graphe.
+
+    Args:
+        G : le graphe
+
+    Returns:
+        str : le nom de l'acteur le plus central.
+    """
+    name = ""
+    minimum = None
+    for node in G.nodes():
+        if len(G.adj[node]) > 1:
+            stock = centralite(G, node)
+            if minimum is None or stock < minimum:
+                name = node
+                minimum = stock
+    return name
+
+def centraliteForEloignementMax(G,u):
+    """Donne la centralité d'un acteur dans le graphe. 
+
+    Args:
+        G : le graphe
+        u : le sommet de départ
+
+    Returns:
+        tuple : donne ça distance avec l'acteur le plus loin de lui (int) et le nom de l'acteur le plus loin de lui (str).
     """
     if u not in G.nodes:
         print(u,"est un illustre inconnu")
@@ -171,63 +203,20 @@ def centralite(G,u):
         deja_vue = deja_vue.union(collaborateurs_directs)
     return None
 
-
-
-def centre_hollywood_generale(G):
-    """Cherche le nom de l'acteur le plus central dans le graphe.
-
-    Args:
-        G : le graphe
-
-    Returns:
-        str : le nom de l'acteur le plus central.
-    """
-    name = ""
-    minimum = None
-    for node in G.nodes():
-        if len(G.adj[node]) > 1:
-            stock = centralite(G, node)[0]
-            if minimum is None or stock < minimum:
-                name = node
-                minimum = stock
-    return name
-
-def centre_hollywood(G):
-    """Cherche le nom de l'acteur le plus central dans le graphe.
-    si le graph corespond a celui de la SAE 
-
-    Args:
-        G : le graphe
-
-    Returns:
-        str : le nom de l'acteur le plus central.
-    """
-    name = ""
-    minimum = None
-    for node in G.nodes():
-        if len(G.adj[node]) > 1:
-            if distance(G,node,"Al Pacino") is not None : ### pour verifier que node est dans le graph principale 
-                 stock = centralite(G, node)[0]
-                 if minimum is None or stock < minimum:
-                    name = node
-                    minimum = stock
-    return name
-
 def eloignement_max(G):
     """Cherche la distance maximale entre deux acteurs dans le graphe.
 
     Args:
-        G: le graph
+        G : le graphe
 
-    
     Returns:
         int : distance maximale entre deux acteurs.
     """
     res = []
     compteur = 0
     for name in G.nodes:
-        maximum, nom = centralite(G, name)
-        distance, tmp = centralite(G, nom)
+        _, nom = centraliteForEloignementMax(G, name)
+        distance, _ = centraliteForEloignementMax(G, nom)
         res.append(distance)
         if compteur > 4:
             break
