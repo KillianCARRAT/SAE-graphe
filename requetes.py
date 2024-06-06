@@ -2,30 +2,26 @@ import networkx as nx
 import json
 import matplotlib.pyplot as plt
 import re
-import time
 
 def json_vers_nx(nom_fichier):
-    """_summary_
+    """Transforme un fichier de format JSON sous format .txt en graphe.
 
     Args:
-        nom_fichier (_type_): _description_
+        nom_fichier (str) : chemin d'accès au fichier JSON.
 
     Returns:
-        _type_: _description_
+        Graph : retourne un graphique de l'ensemble des acteurs du fichier.
     """
     Hollywood = nx.Graph()
 
     with open(nom_fichier, 'r', encoding="utf-8") as f:
         for line in f:
-            tests = json.loads(line)  # Use json.loads instead of eval
+            tests = json.loads(line)
 
-            # Create a set of actors
             actors = {re.sub(r"[\[\]]", "", actor).split("|")[-1] for actor in tests["cast"]}
-            
-            # Add nodes (actors) to the graph
+
             Hollywood.add_nodes_from(actors)
 
-            # Add edges between every pair of actors in the cast
             for actor in actors:
                 for other_actor in actors:
                     if actor != other_actor:
@@ -33,19 +29,17 @@ def json_vers_nx(nom_fichier):
 
     return Hollywood
 
-start = time.time()
-Hollywood = json_vers_nx("jeux de données réduits-20240507/data.txt")
-end = time.time()
-print(end - start)
-
 def collaborateurs_communs(G,u,v):
-    """Fonction renvoyant l'ensemble des acteurs en commun entre u et v. La fonction renvoie None si u ou v est absent du graphe.
+    """Fonction renvoyant l'ensemble des acteurs en commun entre u et v. 
+    La fonction renvoie None si u ou v est absent du graphe.
     
     Parametres:
-        G: le graphe
-        u: le sommet de départ
-        v: le sommet d'arriver
+        G : le graphe
+        u : le sommet de départ
+        v : le sommet d'arriver
 
+    Returns:
+        set : ensemble des acteurs en commun entre u et v.
     """
     if u not in G.nodes or v not in G.nodes:
         print(u, 'ou',v,"sont des illustres inconnus")
@@ -57,14 +51,17 @@ def collaborateurs_communs(G,u,v):
             res.add(colla)
     return res
 
-
 def collaborateurs_proches(G,u,k):
-    """Fonction renvoyant l'ensemble des acteurs à distance au plus k de l'acteur u dans le graphe G. La fonction renvoie None si u est absent du graphe.
+    """Fonction renvoyant l'ensemble des acteurs à distance au plus k de l'acteur u dans le graphe. 
+    La fonction renvoie None si u est absent du graphe.
     
     Parametres:
-        G: le graphe
-        u: le sommet de départ
-        k: la distance depuis u
+        G : le graphe
+        u : le sommet de départ
+        k : la distance depuis u
+
+    Returns:
+        set : ensemble des acteurs à distance au plus k de l'acteur u.
     """
     if u not in G.nodes:
         print(u,"est un illustre inconnu")
@@ -81,28 +78,31 @@ def collaborateurs_proches(G,u,k):
     return collaborateurs
 
 def est_proche(G,u,v,k=1):
-    """Fonction renvoyant True si u et v sont voisine. La fonction renvoie None si u ou v est absent du graphe.
+    """Fonction renvoyant True si u et v sont voisine.
+    La fonction renvoie None si u ou v est absent du graphe.
     
 
     Args:
-        G: le graphe
-        u: le sommet de départ
-        v: le sommet d'arriver
+        G : le graphe
+        u : le sommet de départ
+        v : le sommet d'arriver
         k:la distance depuis u Defaults to 1
+
+    Returns:
+        bool : True si u et v sont voisine.
     """
     return v in collaborateurs_proches(G,u,k)
 
-
 def distance(G,u,v):
-    """_summary_
+    """Donne la distance entre les deux acteurs dans le graphe. 
 
     Args:
-        G: le graphe
-        u: le sommet de départ
-        v: le sommet d'arriver
+        G : le graphe
+        u : le sommet de départ
+        v : le sommet d'arriver
 
     Returns:
-        _type_: _description_
+        int : la distance entre les deux acteurs.
     """
     if u not in G.nodes or v not in G.nodes:
         print(u, 'ou',v,"sont des illustres inconnus")
@@ -114,7 +114,7 @@ def distance(G,u,v):
         for c in collaborateurs:
             for voisin in G.adj[c]:
                 if voisin == v:
-                    return j
+                    return j+1
                 if voisin not in collaborateurs:
                     collaborateurs_directs.add(voisin)
         collaborateurs = collaborateurs.union(collaborateurs_directs)
@@ -122,23 +122,16 @@ def distance(G,u,v):
     return None
 
 
-print(collaborateurs_communs(Hollywood,"James Mapes","Burt Richards"))
-
-
-print(collaborateurs_proches(Hollywood,"James Mapes",1))
-
-print(distance(Hollywood,"James Mapes","Holly Hunter"))
-
 
 def centralite(G,u):
-    """_summary_
+    """Donne la centralité d'un acteur dans le graphe. 
 
     Args:
-        G: le graphe
-        u: le sommet de départ
+        G : le graphe
+        u : le sommet de départ
 
     Returns:
-        _type_: _description_
+        int : donne ça distance avec l'acteur le plus loin de lui.
     """
     if u not in G.nodes:
         print(u,"est un illustre inconnu")
@@ -162,13 +155,13 @@ def centralite(G,u):
 
 
 def centre_hollywood(G):
-    """_summary_
+    """Cherche le nom de l'acteur le plus central dans le graphe.
 
     Args:
-        G: le graph
+        G : le graphe
 
     Returns:
-        _type_: _description_
+        str : le nom de l'acteur le plus central.
     """
     name = ""
     minimum = None
@@ -181,34 +174,20 @@ def centre_hollywood(G):
     return name
 
 
+
 def eloignement_max(G):
-    """_summary_
+    """Cherche la distance maximale entre deux acteurs dans le graphe.
 
     Args:
         G: le graph
 
+    
     Returns:
-        _type_: _description_
+        int : distance maximale entre deux acteurs.
     """
     for i in G.nodes:
         name = i
         break
-    print(name)
     maximum, nom = centralite(G, name)
     res = centralite(G, nom)
     return res
-
-
-start = time.time()
-print(centralite(Hollywood,"Leonardo DiCaprio"))
-end = time.time()
-print(end-start)
-
-
-
-start = time.time()
-#print(eloignement_max(Hollywood))
-end = time.time()
-print(end-start)
-
-
