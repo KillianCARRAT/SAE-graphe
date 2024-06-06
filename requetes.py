@@ -121,7 +121,25 @@ def distance(G,u,v):
     print('ils ne se connaissent pas')
     return None
 
+def distance_naive(G,u,v):
+    """Donne la distance entre les deux acteurs dans le graphe. 
 
+    Args:
+        G : le graphe
+        u : le sommet de départ
+        v : le sommet d'arriver
+
+    Returns:
+        int : la distance entre les deux acteurs.
+    """
+    if u not in G.nodes or v not in G.nodes:
+        print(u, 'ou',v,"sont des illustres inconnus")
+        return None
+    for i in range(len(G.nodes)):
+      if v in collaborateurs_proches(G,u,i):
+          return i
+    print('ils ne se connaissent pas')
+    return None
 
 def centralite(G,u):
     """Donne la centralité d'un acteur dans le graphe. 
@@ -155,7 +173,7 @@ def centralite(G,u):
 
 
 
-def centre_hollywood(G):
+def centre_hollywood_generale(G):
     """Cherche le nom de l'acteur le plus central dans le graphe.
 
     Args:
@@ -174,7 +192,26 @@ def centre_hollywood(G):
                 minimum = stock
     return name
 
+def centre_hollywood(G):
+    """Cherche le nom de l'acteur le plus central dans le graphe.
+    si le graph corespond a celui de la SAE 
 
+    Args:
+        G : le graphe
+
+    Returns:
+        str : le nom de l'acteur le plus central.
+    """
+    name = ""
+    minimum = None
+    for node in G.nodes():
+        if len(G.adj[node]) > 1:
+            if distance(G,node,"Al Pacino") is not None : ### pour verifier que node est dans le graph principale 
+                 stock = centralite(G, node)[0]
+                 if minimum is None or stock < minimum:
+                    name = node
+                    minimum = stock
+    return name
 
 def eloignement_max(G):
     """Cherche la distance maximale entre deux acteurs dans le graphe.
