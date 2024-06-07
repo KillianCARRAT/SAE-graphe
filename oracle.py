@@ -11,20 +11,20 @@ def programme_principal():
     while True:
         graphe_test = input("Quelle jeu de donner voulez-vous tester? 100 - 1000 - 10000 - plus : ")
         if graphe_test ==  "100":
-            G = requetes.json_vers_nx("jeux_données/data_100.txt")
+            G = requetes.json_vers_nx("data_100.txt")
             test=1
             break
         elif graphe_test == "1000":
-            G = requetes.json_vers_nx("jeux_données/data_1000.txt")
+            G = requetes.json_vers_nx("data_1000.txt")
             test=2
             break
         elif graphe_test == "10000":
-            G = requetes.json_vers_nx("jeux_données/data_10000.txt")
+            G = requetes.json_vers_nx("data_10000.txt")
             test=3
             break
         elif graphe_test == "plus":
             print("La création du graphe peux prendre un peu de temps. Veuillez patienter.")
-            G = requetes.json_vers_nx("jeux_données/data.txt")
+            G = requetes.json_vers_nx("data.txt")
             test=4
             break
 
