@@ -60,7 +60,7 @@ def programme_principal():
 
         elif autre_inf == 5:
             acteur1 = input("De quel acteur voulez-vous avoir sa centralite ? (1 acteur)")
-            res = requetes.centralite(G, acteur1)[0]
+            res = requetes.centralite(G, acteur1)
             print("La centralité de ", acteur1, " est de ", res,".")
 
         elif autre_inf == 6:
