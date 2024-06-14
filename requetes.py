@@ -181,7 +181,7 @@ def centre_hollywood_generale(G):
     minimum = None
     for node in G.nodes():
         if len(G.adj[node]) > 1:
-            stock = centralite(G, node)[0]
+            stock = centralite(G, node)
             if minimum is None or stock < minimum:
                 name = node
                 minimum = stock
@@ -201,7 +201,7 @@ def centre_hollywood(G):
     for node in G.nodes():
         if len(G.adj[node]) > 1:
             if distance(G,node,"Al Pacino") is not None : ### pour verifier que node est dans le graph principale 
-                 stock = centralite(G, node)[0]
+                 stock = centralite(G, node)
                  if minimum is None or stock < minimum:
                     name = node
                     minimum = stock
